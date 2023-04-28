@@ -12,8 +12,6 @@ app.use(cors({
     origin: /http:\/\/localhost/
 }))
 
-
-
 // ouvre le port et le serveur
 
 http.listen(8000, () =>{
@@ -41,8 +39,18 @@ db.connect(function(err){
 
 //routage
 
-app.get('/tasks/incomplete', (req,res) => {
+app.get('/tasks/uncomplete', (req,res) => {
     db.query("select * from tasks where is_done=false;", function(err, reponse){
+            if (err) throw err;
+            var locals={
+                tasksList:reponse
+            }
+            res.send(locals);
+    });
+    
+});
+app.get('/tasks/complete', (req,res) => {
+    db.query("select * from tasks where is_done=true;", function(err, reponse){
             if (err) throw err;
             var locals={
                 tasksList:reponse
