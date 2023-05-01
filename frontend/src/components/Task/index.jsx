@@ -1,7 +1,8 @@
-function Task({id_task, title, description, end_date, duration, task_category, completionDate}){
+function Task({id_task, title, description, end_date, duration, task_category, completionDate, niveau}){
     return(
-        <div>
+        <div data-parentcat={task_category}>
             <br />
+            <p>Niveau : {niveau}</p>
             <p>id de task : {id_task}</p>
             <p>titre : {title}</p>
             <p>description : {description}</p>
