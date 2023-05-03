@@ -1,14 +1,22 @@
+import styled from "styled-components"
+
+const StyledCategory = styled.div`
+    padding:1em;
+    ${({niveau})=>
+    `   padding-left:calc(1em + (${niveau}*5%));
+    `}
+`
+const StyledTitle = styled.p`
+    font-weight:bold;
+`
+        
+
 function Category({cat, niveau}){
-    let prefixe = "";
-    for(let i=0;i<niveau;i++){
-      prefixe+="-"
-    }
+
     return(
-        <div data-parentcat={cat.parent_category}>
-            <br />
-            <p>{prefixe}{cat.name}</p>
-            <br />
-        </div>
+        <StyledCategory data-parentcat={cat.parent_category} niveau={niveau}>
+            <StyledTitle>{cat.name}</StyledTitle>
+        </StyledCategory>
     )
 }
 

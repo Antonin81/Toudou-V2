@@ -10,11 +10,24 @@ import Footer from './components/Footer';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Connection from './pages/Connection';
 import MentionLegales from './pages/MentionsLegales';
+import { createGlobalStyle } from 'styled-components';
+import colors from './utils/style/colors';
+
+const GlobalStyle = createGlobalStyle`
+  *{
+    margin:0;
+    box-sizing:border-box;
+  }
+  body{
+    background-color:${colors.light_gray};
+  }
+`
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Router>
+      <GlobalStyle/>
       <Routes>
         <Route exact path='/' element={<Landing/>} />
         <Route exact path='/Connection' element={<Connection/>} />

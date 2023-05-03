@@ -1,49 +1,45 @@
-import { useFetch } from "../../utils/hooks"
-import Task from "../../components/Task"
-import React from "react"
-import Category from "../../components/Category"
+import { useFetch } from "../../utils/hooks";
+import React from "react";
+import TasksTreeSection from "../../components/TasksTreeSection";
+import colors from "../../utils/style/colors";
+import styled from "styled-components";
 
-function Complete(){
-
-  const { data, isLoading, error } = useFetch('http://localhost:8000/tasks/complete')
-
-  function afficherTask(task, niveau){
-    const key="task"+task.id_task
-    return(
-      <Task key={key} id_task={task.id_task} title={task.title} description={task.des} end_date={task.end_date} duration={task.duration} task_category={task.task_category} completionDate={task.completionDate} niveau={niveau}/>
-    )
+const TasksTreeSectionStyled = styled.div`
+  >*{
+    background-color:${colors.yellow};
   }
-
-  function afficherCat(cat,niveau){
-    const key="cat"+cat.id_category
-    return(
-      <React.Fragment key={key}>
-        <Category cat={cat} niveau={niveau}/>
-        {data.tasksMap[cat.id_category] && data.tasksMap[cat.id_category].map((childrenTask)=>{
-          return(afficherTask(childrenTask, niveau+1))
-        })}
-        {data.categoriesMap[cat.id_category] && data.categoriesMap[cat.id_category].map((children)=>{
-          return(afficherCat(children,niveau+1))
-        })}
-      </React.Fragment>
-    )
+  >:nth-child(even){
+      background-color:gold;
   }
+`
+
+const StyledMain = styled.main`
+  padding:1em 2em;
+`
+
+function Uncomplete() {
+
+  const { data, isLoading, error } = useFetch('http://localhost:8000/tasks/complete')  
 
   if(error){
     return <p>Oups... Désolés pour l'erreur!</p>
   }
 
   return (
-    <main>
+    <StyledMain>
       {
       !isLoading 
-        ? (afficherCat(data.firstCategory,0))
+        ? (
+          <TasksTreeSectionStyled>
+            <TasksTreeSection data={data} page={"Complete"}/>
+          </TasksTreeSectionStyled>
+          )
         :(
         <p>Chargement</p>
         )
       }
-    </main>
+    </StyledMain>
   );
 }
 
-export default Complete
+export default Uncomplete;
