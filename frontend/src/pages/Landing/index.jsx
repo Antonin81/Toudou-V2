@@ -23,9 +23,6 @@ function Landing(){
                 </article>
                 <Link to='/Connection'>Connectez-vous (Call to action)</Link>
             </main>
-            <footer>
-                Mentions légales
-            </footer>
         </React.Fragment>
     )
 }

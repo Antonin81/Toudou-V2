@@ -17,7 +17,7 @@ function Header(){
             <Link to="/Home">Accueil</Link>
             <Link to="/Uncomplete">En cours</Link>
             <Link to="/Complete">Finies</Link>
-            <Link to="/Modify">Modifications</Link>
+            {/* <Link to="/Modify">Modifications</Link> */}
             <Link to="/">Déconnexion</Link>
             </nav>
         </StyledHeader>

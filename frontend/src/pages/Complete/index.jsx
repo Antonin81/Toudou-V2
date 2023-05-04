@@ -1,8 +1,9 @@
 import { useFetch } from "../../utils/hooks";
-import React from "react";
+import React, { useState } from "react";
 import TasksTreeSection from "../../components/TasksTreeSection";
 import colors from "../../utils/style/colors";
 import styled from "styled-components";
+import PopUpAdd from "../../components/PopUpAdd";
 
 const TasksTreeSectionStyled = styled.div`
   >*{
@@ -11,15 +12,21 @@ const TasksTreeSectionStyled = styled.div`
   >:nth-child(even){
       background-color:gold;
   }
+  border-radius: 10px;
+  overflow:hidden;
+  filter: drop-shadow(0 0 0.75rem rgba(0, 0, 0, 0.2));
+  border: 2px dashed ${colors.yellow};
 `
 
 const StyledMain = styled.main`
   padding:1em 2em;
 `
 
-function Uncomplete() {
+function Complete() {
 
   const { data, isLoading, error } = useFetch('http://localhost:8000/tasks/complete')  
+  const [isCategoryCreationPopUpOpened, setIsCategoryCreationPopUpOpened] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState(null)
 
   if(error){
     return <p>Oups... Désolés pour l'erreur!</p>
@@ -31,15 +38,18 @@ function Uncomplete() {
       !isLoading 
         ? (
           <TasksTreeSectionStyled>
-            <TasksTreeSection data={data} page={"Complete"}/>
+            <TasksTreeSection data={data} page={"Complete"} setIsCategoryCreationPopUpOpened={setIsCategoryCreationPopUpOpened} setSelectedCategory={setSelectedCategory} />
           </TasksTreeSectionStyled>
           )
         :(
         <p>Chargement</p>
         )
       }
+      {
+        isCategoryCreationPopUpOpened && <PopUpAdd selectedCategory={selectedCategory} setIsCategoryCreationPopUpOpened={setIsCategoryCreationPopUpOpened} />
+      }
     </StyledMain>
   );
 }
 
-export default Uncomplete;
+export default Complete;

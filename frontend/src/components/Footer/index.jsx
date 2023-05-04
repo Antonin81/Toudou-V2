@@ -1,10 +1,16 @@
 import { Link } from "react-router-dom"
+import styled from "styled-components"
+import colors from "../../utils/style/colors"
+
+const StyledFooter = styled.footer`
+    background-color:${colors.primary_blue};
+`
 
 function Footer(){
     return(
-        <footer>
+        <StyledFooter>
             <Link to='/MentionsLegales'>Mentions légales</Link>
-        </footer>
+        </StyledFooter>
     )
 }
 
