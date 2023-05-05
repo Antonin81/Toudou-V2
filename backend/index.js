@@ -37,70 +37,6 @@ db.connect(function(err){
     console.log("Connecté à la base de données");
 });
 
-//création type de données
-/*
-class CategoriesTree{
-    constructor(id, name, parentId){
-      this.id=id;
-      this.name=name;
-      this.parentId=parentId;
-      this.children=[];
-    }
-    // fonction booléenne qui doit renvoyer si une catégorie se trouve dans l'arbre, à partir de son id
-    containsId(id){
-      if(this.id===id){
-          return true;
-      }else{
-          for(let cat of this.children){
-              if(cat.containsId(id)){
-                  return true;
-              }
-          }
-          return false;
-      }
-    }
-    //Fonction qui trouve ma catégorie correspondant à un id donné dans l'arbre
-    getCategory(id){
-      try {
-          //teste si on a trouvé le noeud possédant le bon identifiant, si oui on le renvoit, sinon autre traitement
-          if(this.id===id){
-              return this;
-          }else{
-              //ici, pour chaque enfant du noeud actuel, on teste la correspondance
-              let solution;
-              for(let cat of this.children){
-                  solution = cat.getCategory(id);
-                  //si la solution est définie, on la renvoit.
-                  if(solution!==undefined){
-                      return solution;
-                  }
-              }
-              //on retourne la solution trouvée
-              return solution;
-          }
-      } catch (error) {
-          console.error("This Category isn't stored");
-      }
-    }
-    //fonction qui ajoute un noeud à l'arbre
-    add(category){
-      console.log(this.getCategory(category.parent_category))
-      this.getCategory(category.parent_category).children.push(new CategoriesTree(category.id_category,category.name,category.parent_category))
-    }
-  
-    //on récupère le parent d'une catégorie à partir de son id
-    getParentId(id){
-      if(this.containsId(id)){
-          return ((this.getCategory(id)).parentId);
-      }else{
-          console.error("This element isn't in the tree");
-      }
-    }
-    //fonction de conversion d'un arbre vers un string
-    toString(tasksMap){
-      return `\n\nid : ${this.id}, name : ${this.name}, parentCategory : ${this.parentId}, children : ${this.children}, associated tasks : ${tasksMap.get(this.id)}`;
-    }
-}*/
 
 function createTasksMap(data){
     var tempMap={}
@@ -108,10 +44,8 @@ function createTasksMap(data){
         var key=task.task_category.toString()
       if(Object.keys(tempMap).includes(key)){
         tempMap[key].push(task)
-        //tempMap.get(task.task_category).push(task);
       }else{
         tempMap[key]=[task]
-        //tempMap.set(task.task_category, [task]);
       }
     }
     return tempMap
@@ -130,21 +64,8 @@ function createCategoriesMap(data){
     return tempMap
 }
 
-/*  
-function createCategoriesTree(list){
-    var tempCategoriesTree= new CategoriesTree(list[0].id_category,list[0].name,list[0].parent_category);
-    console.log(tempCategoriesTree)
-    list.shift();
-      
-    for( let cat of list){
-      tempCategoriesTree.add(cat);
-    }
-  
-    return tempCategoriesTree
-}*/
-
 //routage
-
+//--tasks
 app.get('/tasks/uncomplete', (req,res) => {
     db.query("select * from tasks where is_done=false;", function(err, reponse){
         if (err) throw err;
@@ -190,3 +111,73 @@ app.get('/tasks/complete', (req,res) => {
         })
     });
 });
+
+app.post('/tasks/create', (req,res) => {
+    console.log(req.body)   
+    if(req.body.end_date!=null){
+        db.query(`insert into tasks (title, description, end_date,is_done,duration,task_category) values ('${req.body.title}', '${req.body.description}','${req.body.end_date}',false,${req.body.duration},${req.body.task_category});`,(err,reponse)=>{
+            if (err!=undefined){
+                res.send(false)
+                throw err;
+            } 
+        }) 
+        res.send(true)
+    }else{
+        db.query(`insert into tasks (title, description, is_done,duration,task_category) values ('${req.body.title}', '${req.body.description}',false,${req.body.duration},${req.body.task_category});`,(err,reponse)=>{
+            if (err!=undefined){
+                res.send(false)
+                throw err;
+            } 
+        }) 
+        res.send(true)
+    }
+    
+})
+
+app.post('/tasks/delete',(req,res)=>{
+    db.query(`delete from tasks where id_task=${req.body.id_task};`, function(err, reponse){
+        if(err!=undefined){
+            res.send(false);
+            throw err;
+        }
+    });
+    res.send(true)
+})
+
+app.post('/tasks/check',(req,res)=>{
+    db.query(`update tasks set is_done=true where id_task=${req.body.id_task};`, function(err, reponse){
+        if(err!=undefined){
+            res.send(false);
+            throw err;
+        }
+    });
+    res.send(true)
+})
+
+//--categories
+
+app.post('/categories/create',(req,res)=>{
+    db.query(`insert into categories(name, parent_category) values('${req.body.categoryName}',${req.body.parentCategoryId});`, function(err, reponse){
+        if (err!=undefined){
+            res.send(false)
+            throw err;
+        } 
+    });
+    res.send(true)
+})
+
+app.post('/categories/delete',(req,res)=>{
+    db.query(`delete from tasks where task_category=${req.body.categoryId};`, function(err, reponse){
+        if(err!=undefined){
+            res.send(false);
+            throw err;
+        }
+    });
+    db.query(`delete from categories where id_category=${req.body.categoryId};`, function(err, reponse){
+        if(err!=undefined){
+            res.send(false);
+            throw err;
+        }
+    });
+    res.send(true)
+})
