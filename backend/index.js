@@ -116,68 +116,122 @@ app.post('/tasks/create', (req,res) => {
     console.log(req.body)   
     if(req.body.end_date!=null){
         db.query(`insert into tasks (title, description, end_date,is_done,duration,task_category) values ('${req.body.title}', '${req.body.description}','${req.body.end_date}',false,${req.body.duration},${req.body.task_category});`,(err,reponse)=>{
-            if (err!=undefined){
-                res.send(false)
-                throw err;
-            } 
+            if(err!=undefined){
+                res.send({errorHasOccured:true});
+            }
+            else{
+                res.send({errorHasOccured:false})
+            }
         }) 
-        res.send(true)
     }else{
         db.query(`insert into tasks (title, description, is_done,duration,task_category) values ('${req.body.title}', '${req.body.description}',false,${req.body.duration},${req.body.task_category});`,(err,reponse)=>{
-            if (err!=undefined){
-                res.send(false)
-                throw err;
-            } 
+            if(err!=undefined){
+                res.send({errorHasOccured:true});
+            }
+            else{
+                res.send({errorHasOccured:false})
+            }
         }) 
-        res.send(true)
     }
     
 })
 
-app.post('/tasks/delete',(req,res)=>{
+app.delete('/tasks/delete',(req,res)=>{
     db.query(`delete from tasks where id_task=${req.body.id_task};`, function(err, reponse){
         if(err!=undefined){
-            res.send(false);
-            throw err;
+            res.send({errorHasOccured:true});
+        }
+        else{
+            res.send({errorHasOccured:false})
         }
     });
-    res.send(true)
 })
 
-app.post('/tasks/check',(req,res)=>{
+app.patch('/tasks/check',(req,res)=>{
     db.query(`update tasks set is_done=true where id_task=${req.body.id_task};`, function(err, reponse){
         if(err!=undefined){
-            res.send(false);
-            throw err;
+            res.send({errorHasOccured:true});
+        }
+        else{
+            res.send({errorHasOccured:false})
         }
     });
-    res.send(true)
+})
+
+app.patch('/tasks/modifyParent',(req,res)=>{
+    db.query(`update tasks set task_category=${req.body.newParent} where id_task=${req.body.id_task};`,function(err, reponse){
+        if(err!=undefined){
+            res.send({errorHasOccured:true});
+        }
+        else{
+            res.send({errorHasOccured:false})
+        }
+    })
 })
 
 //--categories
 
-app.post('/categories/create',(req,res)=>{
-    db.query(`insert into categories(name, parent_category) values('${req.body.categoryName}',${req.body.parentCategoryId});`, function(err, reponse){
-        if (err!=undefined){
-            res.send(false)
-            throw err;
-        } 
-    });
-    res.send(true)
+app.get('/categories',(req,res)=>{
+    db.query('select * from categories;', function(err, reponse){
+        if(err)throw err;
+        db.query('select * from categories where id_category=parent_category;', function(err2, reponse2){
+            if(err2)throw err2;
+            var categoriesMap = createCategoriesMap(reponse)
+            var locals={
+                categoriesList:reponse,
+                categoriesMap:categoriesMap,
+                firstCategory:reponse2
+            }
+            res.send(locals)
+        })
+    })
 })
 
-app.post('/categories/delete',(req,res)=>{
+app.post('/categories/create',(req,res)=>{
+    db.query(`insert into categories(name, parent_category) values('${req.body.categoryName}',${req.body.parentCategoryId});`, function(err, reponse){
+        if(err!=undefined){
+            res.send({errorHasOccured:true});
+        }
+        else{
+            res.send({errorHasOccured:false})
+        }
+    });
+})
+
+app.delete('/categories/delete',(req,res)=>{
     db.query(`delete from tasks where task_category=${req.body.categoryId};`, function(err, reponse){
         if(err!=undefined){
-            res.send(false);
-            throw err;
+            res.send({errorHasOccured:true});
         }
     });
     db.query(`delete from categories where id_category=${req.body.categoryId};`, function(err, reponse){
         if(err!=undefined){
-            res.send(false);
-            throw err;
+            res.send({errorHasOccured:true});
+        }
+        else{
+            res.send({errorHasOccured:false})
         }
     });
-    res.send(true)
+})
+
+app.patch('/categories/modifyName',(req,res)=>{
+    db.query(`update categories set name='${req.body.newName}' where id_category=${req.body.id_category};`,function(err, reponse){
+        if(err!=undefined){
+            res.send({errorHasOccured:true});
+        }
+        else{
+            res.send({errorHasOccured:false})
+        }
+    })
+})
+
+app.patch('/categories/modifyParent',(req,res)=>{
+    db.query(`update categories set parent_category=${req.body.newParent} where id_category=${req.body.id_category};`,function(err, reponse){
+        if(err!=undefined){
+            res.send({errorHasOccured:true});
+        }
+        else{
+            res.send({errorHasOccured:false})
+        }
+    })
 })

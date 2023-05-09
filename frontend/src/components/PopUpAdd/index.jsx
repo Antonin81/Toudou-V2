@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import styled from "styled-components"
 
 const PopUp = styled.div`
-    position:absolute;
+    position:fixed;
     inset:0px;
     background-color:rgba(0, 0, 0, 0.7);
     display:flex;

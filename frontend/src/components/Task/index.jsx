@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import React from "react"
 import { Link } from "react-router-dom"
 import styled, { keyframes } from "styled-components"
@@ -40,13 +40,11 @@ const RightPartTask = styled.div`
     display:flex;
 `
 
-function Task({id_task, title, description, end_date, duration, task_category, completionDate, niveau, page}){
+function Task({id_task, title, description, end_date, duration, task_category, completionDate, niveau, page, error, setError}){
 
     const [showAll, setShowAll]=useState(false)
     const [days,hours,minutes]=calculateDuration(duration)
-    const [isLoading, setIsLoading]=useState(false)
     const [data, setData]=useState(null)
-    const [error, setError]=useState(false)
     const [exists, setExists]=useState(true)
 
     function handleClick(e){
@@ -63,27 +61,39 @@ function Task({id_task, title, description, end_date, duration, task_category, c
         return [days,hours,d];
     }
 
-    async function tryFetchPost(url,reqBody){
-
-        setIsLoading(true)
+    async function tryFetchDelete(url,reqBody){
         try {
             const requestOptions = {
-                method: 'POST',
+                method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(reqBody)
             };
             const response = await fetch(`http://localhost:8000${url}`,requestOptions)
-            setData(await response.json())
+            const infos=await response.json()
+            setError(infos.errorHasOccured)
         }catch(err){
             throw err;
-        } finally {
-            setIsLoading(false)
+        }
+    }
+
+    async function tryFetchPatch(url,reqBody){
+        try {
+            const requestOptions = {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reqBody)
+            };
+            const response = await fetch(`http://localhost:8000${url}`,requestOptions)
+            const infos=await response.json()
+            setError(infos.errorHasOccured)
+        }catch(err){
+            throw err;
         }
     }
 
     function handleClickDeletion(e){
         try{
-            tryFetchPost('/tasks/delete',{id_task:id_task})
+            tryFetchDelete('/tasks/delete',{id_task:id_task})
             setExists(false)
         } catch(err){
             console.log(err)
@@ -93,7 +103,7 @@ function Task({id_task, title, description, end_date, duration, task_category, c
 
     function handleClickCheck(e){
         try{
-            tryFetchPost('/tasks/check',{id_task:id_task})
+            tryFetchPatch('/tasks/check',{id_task:id_task})
             setExists(false)
         }catch(err){
             console.log(err)
@@ -115,8 +125,6 @@ function Task({id_task, title, description, end_date, duration, task_category, c
         return `${day}/${month}/${year}`;
         
     }
-
-
 
     const linkToUpdate=`/UpdateTask/${id_task}`
     return( exists &&

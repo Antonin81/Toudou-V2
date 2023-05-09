@@ -4,8 +4,6 @@ import { useState } from "react"
 function CreateCategory(){
 
     const {selectedCategory}=useParams()
-    const [data, setData]=useState(null)
-    const [isLoading, setIsLoading]=useState(null)
     const [error, setError]=useState(null)
 
     function handleSubmit(e){
@@ -22,7 +20,6 @@ function CreateCategory(){
 
     async function tryFetchPost(reqBody){
 
-        setIsLoading(true)
         try {
             const requestOptions = {
                 method: 'POST',
@@ -30,21 +27,23 @@ function CreateCategory(){
                 body: JSON.stringify(reqBody)
             };
             const response = await fetch('http://localhost:8000/categories/create',requestOptions)
-            setData(await response.json())
+            setError(await response.json().errorHasOccured)
         }catch(err){
             throw err;
-        } finally {
-            setIsLoading(false)
         }
     }
 
-    return(
+    return(!error ?
         <main>
             <h1>Créez une nouvelle Catégorie</h1>
             <form onSubmit={handleSubmit}>
                 <input type="text" name="inputNom" id="" placeholder="nom de la catégorie" />
                 <button type="submit">Valider</button>
             </form>
+        </main>
+        :
+        <main>
+            <p>La requète n'est pas passée</p>
         </main>
     )
 }

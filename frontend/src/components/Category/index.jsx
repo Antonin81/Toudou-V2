@@ -18,28 +18,23 @@ const RightPartCategory = styled.div`
     display:flex;
 `
 
-function Category({cat, niveau, setIsCategoryCreationPopUpOpened, setSelectedCategory}){
+function Category({cat, niveau, setIsCategoryCreationPopUpOpened, setSelectedCategory, error, setError}){
 
-    const [isLoading, setIsLoading]=useState(false)
-    const [data, setData]=useState(null)
-    const [error, setError]=useState(false)
     const [exists, setExists]=useState(true)
 
-    async function tryFetchPost(reqBody){
+    async function tryFetchDelete(reqBody){
 
-        setIsLoading(true)
         try {
             const requestOptions = {
-                method: 'POST',
+                method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(reqBody)
             };
             const response = await fetch('http://localhost:8000/categories/delete',requestOptions)
-            setData(await response.json())
+            const infos=await response.json()
+            setError(infos.errorHasOccured)
         }catch(err){
             throw err;
-        } finally {
-            setIsLoading(false)
         }
     }
 
@@ -50,7 +45,7 @@ function Category({cat, niveau, setIsCategoryCreationPopUpOpened, setSelectedCat
 
     function handleClickDeletion(e){
         try{
-            tryFetchPost({categoryId:cat.id_category})
+            tryFetchDelete({categoryId:cat.id_category})
             setExists(false)
         } catch(err){
             console.log(err)

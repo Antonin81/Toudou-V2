@@ -4,13 +4,10 @@ import { useParams } from "react-router-dom"
 function CreateTask(){
 
     const {selectedCategory}=useParams()
-    const [data, setData]=useState(null)
     const [error, setError]=useState(false)
-    const [isLoading, setIsLoading]=useState(false)
 
     async function tryFetchPost(reqBody){
 
-        setIsLoading(true)
         try {
             const requestOptions = {
                 method: 'POST',
@@ -18,13 +15,11 @@ function CreateTask(){
                 body: JSON.stringify(reqBody)
             };
             const response = await fetch('http://localhost:8000/tasks/create',requestOptions)
-            setData(await response.json())
+            setError(await response.json().errorHasOccured)
         }catch(err){
             console.log(err)
             setError(true)
-        } finally {
-            setIsLoading(false)
-        }
+        } 
     }
 
     function convertTimeToMinutes(days, hours, minutes){
@@ -73,7 +68,7 @@ function CreateTask(){
         e.target["minutes"].value=null
     }
 
-    return(
+    return(!error ?
         <main>
             <h1>Créez une nouvelle Tâche</h1>
             <form onSubmit={handleSubmit}>
@@ -92,6 +87,11 @@ function CreateTask(){
                 <button type="submit">Valider</button>
             </form>
         </main>
+        :
+        <main>
+            <p>la requête n'est pas passée</p>
+        </main>
+
     )
 }
 
