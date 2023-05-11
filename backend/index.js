@@ -291,3 +291,13 @@ app.patch('/categories/modifyParent',(req,res)=>{
         }
     })
 })
+
+app.get('/categories/:categoryId',(req,res)=>{
+    db.query(`select * from categories where id_category=${req.params.categoryId};`, function(err, reponse){
+        if(err)throw err;
+        var locals={
+            category:reponse
+        }
+        res.send(locals)
+    })
+})

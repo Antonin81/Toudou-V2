@@ -132,12 +132,12 @@ function ModifyTask(){
                 <main>
                     <h1>Modifier l'intitulé</h1>
                     <form onSubmit={handlerSubmitModifyTitle}>
-                        <input type="text" name="inputNewTitle" id="inputNewTitle" placeholder={taskResults.data.task[0].title}/>
+                        <input type="text" name="inputNewTitle" id="inputNewTitle" defaultValue={taskResults.data.task[0].title}/>
                         <button type="submit">Valider</button>
                     </form>
                     <h1>Modifier la description</h1>
                     <form onSubmit={handlerSubmitModifyDescription}>
-                        <textarea name="inputNewDescription" id="inputNewDescription" cols="30" rows="10" placeholder={taskResults.data.task[0].description}></textarea>
+                        <textarea name="inputNewDescription" id="inputNewDescription" cols="30" rows="10" defaultValue={taskResults.data.task[0].description}></textarea>
                         <button type="submit">Valider</button>
                     </form>
                     <h1>Modifier la durée estimée</h1>

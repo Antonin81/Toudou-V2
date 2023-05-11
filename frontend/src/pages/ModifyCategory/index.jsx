@@ -9,6 +9,7 @@ function ModifiyCategory(){
     const [error, setError] = useState(false)
 
     const results = useFetch('http://localhost:8000/categories')  
+    const currentCategoryResults = useFetch(`http://localhost:8000/categories/${selectedCategory}`)
 
     async function tryFetchPatch(reqBody,url){
 
@@ -64,17 +65,17 @@ function ModifiyCategory(){
     }
 
     return(
-        !results.isLoading ?
-            ((!error && !results.error) ?
+        (!results.isLoading && !currentCategoryResults.error) ?
+            ((!error && !results.error && !currentCategoryResults.error) ?
                 <main>
                     <h1>Modifier le nom</h1>
                     <form onSubmit={handlerSubmitModifyName}>
-                        <input type="text" name="inputNewName" id="inputNewName" />
+                        <input type="text" name="inputNewName" id="inputNewName" defaultValue={currentCategoryResults.data.category[0].name} />
                         <button type="submit">Valider</button>
                     </form>
                     <h1>Déplacer</h1>
                     <form onSubmit={handlerSubmitModifyParent}>
-                        <select name="inputNewPlace" id="inputNewPlace">
+                        <select name="inputNewPlace" id="inputNewPlace" defaultValue={currentCategoryResults.data.category[0].id_category} >
                             {afficherOption(results.data.firstCategory[0],"")}
                         </select>
                         <button type="submit">Valider</button>
