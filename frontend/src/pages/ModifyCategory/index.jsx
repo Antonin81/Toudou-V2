@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import { useFetch } from "../../utils/hooks";
 import React from "react";
@@ -49,6 +49,15 @@ function ModifiyCategory(){
         }
     }
 
+    function handlerSubmitModify(e){
+        console.log(e.target["inputNewPlace"].value)
+        console.log(currentCategoryResults.data.category[0].id_category)
+        if(e.target["inputNewPlace"].value!=currentCategoryResults.data.category[0].id_category){
+            handlerSubmitModifyName(e)
+            handlerSubmitModifyParent(e)
+        }
+    }
+
     function afficherOption(cat,stringBuilder){
         const key="option"+cat.id_category
         stringBuilder+=`/${cat.name}`
@@ -65,17 +74,14 @@ function ModifiyCategory(){
     }
 
     return(
-        (!results.isLoading && !currentCategoryResults.error) ?
+        (!results.isLoading && !currentCategoryResults.isLoading) ?
             ((!error && !results.error && !currentCategoryResults.error) ?
                 <main>
-                    <h1>Modifier le nom</h1>
-                    <form onSubmit={handlerSubmitModifyName}>
+                    <form onSubmit={handlerSubmitModify}>
+                        <h1>Modifier le nom</h1>
                         <input type="text" name="inputNewName" id="inputNewName" defaultValue={currentCategoryResults.data.category[0].name} />
-                        <button type="submit">Valider</button>
-                    </form>
-                    <h1>Déplacer</h1>
-                    <form onSubmit={handlerSubmitModifyParent}>
-                        <select name="inputNewPlace" id="inputNewPlace" defaultValue={currentCategoryResults.data.category[0].id_category} >
+                        <h1>Déplacer</h1>
+                        <select name="inputNewPlace" id="inputNewPlace" defaultValue={currentCategoryResults.data.category[0].parent_category} >
                             {afficherOption(results.data.firstCategory[0],"")}
                         </select>
                         <button type="submit">Valider</button>

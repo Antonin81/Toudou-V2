@@ -71,11 +71,11 @@ function CreateTask(){
                 <label htmlFor="taskEndDate">Date limite</label>
                 <input type="date" name="taskEndDate" id="taskEndDate" />
                 <label htmlFor="days">jours</label>
-                <input type="number" min={0} defaultValue={0} name="days" id="days" />
+                <input type="number" min={0} name="days" id="days" />
                 <label htmlFor="hours">heures</label>
-                <input type="number" min={0} defaultValue={0} name="hours" id="hours"/>
+                <input type="number" min={0} name="hours" id="hours"/>
                 <label htmlFor="minutes">minutes</label>
-                <input type="number" min={0} defaultValue={0} name="minutes" id="minutes" />
+                <input type="number" min={0} name="minutes" id="minutes" />
                 <button type="submit">Valider</button>
             </form>
         </main>

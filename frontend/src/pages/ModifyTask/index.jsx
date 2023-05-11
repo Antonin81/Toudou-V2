@@ -126,34 +126,30 @@ function ModifyTask(){
         }
     }
 
+    function handlerSubmitModify(e){
+        handlerSubmitModifyTitle(e)
+        handlerSubmitModifyDescription(e)
+        handlerSubmitModifyDuration(e)
+        handlerSubmitModifyEndDate(e)
+        handlerSubmitModifyParent(e)
+    }
+
     return(
         (!results.isLoading && !taskResults.isLoading) ?
             ((!error && !results.error && !taskResults.error) ?
                 <main>
-                    <h1>Modifier l'intitulé</h1>
-                    <form onSubmit={handlerSubmitModifyTitle}>
+                    <form onSubmit={handlerSubmitModify}>
+                        <h1>Modifier l'intitulé</h1>
                         <input type="text" name="inputNewTitle" id="inputNewTitle" defaultValue={taskResults.data.task[0].title}/>
-                        <button type="submit">Valider</button>
-                    </form>
-                    <h1>Modifier la description</h1>
-                    <form onSubmit={handlerSubmitModifyDescription}>
+                        <h1>Modifier la description</h1>
                         <textarea name="inputNewDescription" id="inputNewDescription" cols="30" rows="10" defaultValue={taskResults.data.task[0].description}></textarea>
-                        <button type="submit">Valider</button>
-                    </form>
-                    <h1>Modifier la durée estimée</h1>
-                    <form onSubmit={handlerSubmitModifyDuration}>
+                        <h1>Modifier la durée estimée</h1>
                         <input type="number" min={0} name="inputNewDays" id="inputNewDays" defaultValue={calculateDuration(taskResults.data.task[0].duration)[0]} />
                         <input type="number" min={0} name="inputNewHours" id="inputNewHours" defaultValue={calculateDuration(taskResults.data.task[0].duration)[1]} />
                         <input type="number" min={0} name="inputNewMinutes" id="inputNewMinutes" defaultValue={calculateDuration(taskResults.data.task[0].duration)[2]} />
-                        <button type="submit">Valider</button>
-                    </form>
-                    <h1>Modifier la date limite</h1>
-                    <form onSubmit={handlerSubmitModifyEndDate}>
+                        <h1>Modifier la date limite</h1>
                         <input type="date" name="inputNewDate" id="inputNewDate" defaultValue={utcToLocal(taskResults.data.task[0].end_date)} />
-                        <button type="submit">Valider</button>
-                    </form>
-                    <h1>Déplacer la Tâche</h1>
-                    <form onSubmit={handlerSubmitModifyParent}>
+                        <h1>Déplacer la Tâche</h1>
                         <select name="inputNewPlace" id="inputNewPlace" defaultValue={taskResults.data.task[0].task_category} >
                             {afficherOption(results.data.firstCategory[0],"")}
                         </select>
