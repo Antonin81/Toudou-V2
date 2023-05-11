@@ -9,7 +9,7 @@ function CreateCategory(){
     function handleSubmit(e){
         e.preventDefault()
         try{
-            tryFetchPost({parentCategoryId:selectedCategory, categoryName:e.target["inputNom"].value})
+            tryFetchPost({parentCategoryId:selectedCategory, categoryName:e.target["inputNom"].value.replace(/'/g, "\\'")})
         }
         catch(err){
             setError(true)

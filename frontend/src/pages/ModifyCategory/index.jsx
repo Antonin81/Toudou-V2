@@ -30,7 +30,7 @@ function ModifiyCategory(){
         e.preventDefault()
         const link=`http://localhost:8000/categories/modifyName`
         try {
-            tryFetchPatch({id_category:selectedCategory,newName:e.target["inputNewName"].value},link)
+            tryFetchPatch({id_category:selectedCategory,newName:e.target["inputNewName"].value.replace(/'/g, "\\'")},link)
         } catch (err) {
             console.log(err)
             setError(true)

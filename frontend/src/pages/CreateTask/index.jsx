@@ -51,14 +51,6 @@ function CreateTask(){
 
     function handleSubmit(e){
         e.preventDefault()
-        console.log("youpi")
-        console.log(e.target["taskTitle"].value.replace(/'/g, "\\'"))
-        console.log(e.target["taskDetails"].value.replace(/'/g, "\\'"))
-        console.log(e.target["taskEndDate"].value)
-        console.log(e.target["days"].value)
-        console.log(e.target["hours"].value)
-        console.log(e.target["minutes"].value)
-
         tryFetchPost({title:e.target["taskTitle"].value.replace(/'/g, "\\'"),description:e.target["taskDetails"].value.replace(/'/g, "\\'"),end_date:testDate(e.target["taskEndDate"].value),duration:convertTimeToMinutes(e.target["days"].value,e.target["hours"].value,e.target["minutes"].value), task_category:selectedCategory})
         e.target["taskTitle"].value=null
         e.target["taskDetails"].value=null
@@ -79,11 +71,11 @@ function CreateTask(){
                 <label htmlFor="taskEndDate">Date limite</label>
                 <input type="date" name="taskEndDate" id="taskEndDate" />
                 <label htmlFor="days">jours</label>
-                <input type="number" name="days" id="days" />
+                <input type="number" min={0} defaultValue={0} name="days" id="days" />
                 <label htmlFor="hours">heures</label>
-                <input type="number" name="hours" id="hours"/>
+                <input type="number" min={0} defaultValue={0} name="hours" id="hours"/>
                 <label htmlFor="minutes">minutes</label>
-                <input type="number" name="minutes" id="minutes" />
+                <input type="number" min={0} defaultValue={0} name="minutes" id="minutes" />
                 <button type="submit">Valider</button>
             </form>
         </main>

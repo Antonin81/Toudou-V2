@@ -9,6 +9,7 @@ function ModifyTask(){
     const[error, setError] = useState(false)
 
     const results = useFetch('http://localhost:8000/categories')  
+    const taskResults = useFetch(`http://localhost:8000/tasks/${selectedTask}`)
 
     async function tryFetchPatch(reqBody,url){
 
@@ -28,9 +29,20 @@ function ModifyTask(){
 
     function handlerSubmitModifyParent(e){
         e.preventDefault()
-        const link=`http://localhost:8000/tasks/modifyParent`
+        const link=`http://localhost:8000/tasks/parent`
         try {
             tryFetchPatch({id_task:selectedTask,newParent:e.target["inputNewPlace"].value},link)
+        } catch (err) {
+            console.log(err)
+            setError(true)
+        }
+    }
+
+    function handlerSubmitModifyTitle(e){
+        e.preventDefault()
+        const link=`http://localhost:8000/tasks/title`
+        try {
+            tryFetchPatch({id_task:selectedTask,newTitle:e.target["inputNewTitle"].value.replace(/'/g, "\\'")},link)
         } catch (err) {
             console.log(err)
             setError(true)
@@ -46,41 +58,103 @@ function ModifyTask(){
                 {results.data.categoriesMap[cat.id_category] && results.data.categoriesMap[cat.id_category].map((children)=>{
                     if(children.id_category!==cat.id_category){
                         return(afficherOption(children,stringBuilder))
-                    }
+                    } 
                 })}
             </React.Fragment>
         )
     }
 
+    function calculateDuration(du){
+        var d=parseInt(du)
+        let days=Math.floor(d/(60*24));
+        d-=(60*24*days);
+        let hours=Math.floor(d/(60));
+        d-=60*hours;
+        return [days,hours,d];
+    }
+
+    function utcToLocal(date){
+        let utcDate=new Date(Date.parse(date));
+        const localDate = new Date();
+        localDate.setUTCFullYear(utcDate.getUTCFullYear());
+        localDate.setUTCMonth(utcDate.getUTCMonth());
+        localDate.setUTCDate(utcDate.getUTCDate());
+        localDate.setUTCHours(utcDate.getUTCHours());
+        const day = ('0' + localDate.getDate()).slice(-2);
+        const month = ('0' + (localDate.getMonth() + 1)).slice(-2);
+        const year = localDate.getFullYear();
+        return `${year}-${month}-${day}`;
+        
+    }
+
+    function handlerSubmitModifyEndDate(e){
+        e.preventDefault()
+        const link=`http://localhost:8000/tasks/endDate`
+        console.log(e.target["inputNewDate"].value)
+        try {
+            tryFetchPatch({id_task:selectedTask,newDate:e.target["inputNewDate"].value},link)
+        } catch (err) {
+            console.log(err)
+            setError(true)
+        }
+    }
+
+    function handlerSubmitModifyDescription(e){
+        e.preventDefault()
+        const link=`http://localhost:8000/tasks/description`
+        try {
+            tryFetchPatch({id_task:selectedTask,newDescription:e.target["inputNewDescription"].value.replace(/'/g, "\\'")},link)
+        } catch (err) {
+            console.log(err)
+            setError(true)
+        }
+    }
+
+    function handlerSubmitModifyDuration(e){
+        e.preventDefault()
+        const link=`http://localhost:8000/tasks/duration`
+        if(e.target["inputNewDays"].value!==null && e.target["inputNewHours"].value!==null && e.target["inputNewMinutes"].value!==null ){
+            const duration=(parseInt(e.target["inputNewDays"].value)*24*60)+(parseInt(e.target["inputNewHours"].value)*60)+parseInt(e.target["inputNewMinutes"].value)
+            try {
+                tryFetchPatch({id_task:selectedTask,newDuration:duration},link)
+            } catch (err) {
+                console.log(err)
+                setError(true)
+            }
+        }else{
+            setError(true)
+        }
+    }
+
     return(
-        !results.isLoading ?
-            ((!error && !results.error) ?
+        (!results.isLoading && !taskResults.isLoading) ?
+            ((!error && !results.error && !taskResults.error) ?
                 <main>
                     <h1>Modifier l'intitulé</h1>
-                    <form action="">
-                        <input type="text" name="" id="" />
+                    <form onSubmit={handlerSubmitModifyTitle}>
+                        <input type="text" name="inputNewTitle" id="inputNewTitle" placeholder={taskResults.data.task[0].title}/>
                         <button type="submit">Valider</button>
                     </form>
                     <h1>Modifier la description</h1>
-                    <form action="">
-                        <textarea name="" id="" cols="30" rows="10"></textarea>
+                    <form onSubmit={handlerSubmitModifyDescription}>
+                        <textarea name="inputNewDescription" id="inputNewDescription" cols="30" rows="10" placeholder={taskResults.data.task[0].description}></textarea>
                         <button type="submit">Valider</button>
                     </form>
                     <h1>Modifier la durée estimée</h1>
-                    <form action="">
-                        <input type="number" name="" id="" />
-                        <input type="number" name="" id="" />
-                        <input type="number" name="" id="" />
+                    <form onSubmit={handlerSubmitModifyDuration}>
+                        <input type="number" min={0} name="inputNewDays" id="inputNewDays" defaultValue={calculateDuration(taskResults.data.task[0].duration)[0]} />
+                        <input type="number" min={0} name="inputNewHours" id="inputNewHours" defaultValue={calculateDuration(taskResults.data.task[0].duration)[1]} />
+                        <input type="number" min={0} name="inputNewMinutes" id="inputNewMinutes" defaultValue={calculateDuration(taskResults.data.task[0].duration)[2]} />
                         <button type="submit">Valider</button>
                     </form>
                     <h1>Modifier la date limite</h1>
-                    <form action="">
-                        <input type="date" name="" id="" />
+                    <form onSubmit={handlerSubmitModifyEndDate}>
+                        <input type="date" name="inputNewDate" id="inputNewDate" defaultValue={utcToLocal(taskResults.data.task[0].end_date)} />
                         <button type="submit">Valider</button>
                     </form>
                     <h1>Déplacer la Tâche</h1>
                     <form onSubmit={handlerSubmitModifyParent}>
-                        <select name="inputNewPlace" id="inputNewPlace">
+                        <select name="inputNewPlace" id="inputNewPlace" defaultValue={taskResults.data.task[0].task_category} >
                             {afficherOption(results.data.firstCategory[0],"")}
                         </select>
                         <button type="submit">Valider</button>

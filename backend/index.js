@@ -158,7 +158,7 @@ app.patch('/tasks/check',(req,res)=>{
     });
 })
 
-app.patch('/tasks/modifyParent',(req,res)=>{
+app.patch('/tasks/parent',(req,res)=>{
     db.query(`update tasks set task_category=${req.body.newParent} where id_task=${req.body.id_task};`,function(err, reponse){
         if(err!=undefined){
             res.send({errorHasOccured:true});
@@ -166,6 +166,62 @@ app.patch('/tasks/modifyParent',(req,res)=>{
         else{
             res.send({errorHasOccured:false})
         }
+    })
+})
+
+app.patch('/tasks/title',(req,res)=>{
+    db.query(`update tasks set title='${req.body.newTitle}' where id_task=${req.body.id_task};`,function(err, reponse){
+        if(err!=undefined){
+            res.send({errorHasOccured:true});
+        }
+        else{
+            res.send({errorHasOccured:false})
+        }
+    })
+})
+
+app.patch('/tasks/endDate',(req,res)=>{
+    db.query(`update tasks set end_date='${req.body.newDate}' where id_task=${req.body.id_task};`,function(err, reponse){
+        if(err!=undefined){
+            res.send({errorHasOccured:true});
+        }
+        else{
+            res.send({errorHasOccured:false})
+        }
+    })
+})
+
+app.patch('/tasks/description',(req,res)=>{
+    db.query(`update tasks set description='${req.body.newDescription}' where id_task=${req.body.id_task};`,function(err, reponse){
+        if(err!=undefined){
+            res.send({errorHasOccured:true});
+        }
+        else{
+            res.send({errorHasOccured:false})
+        }
+    })
+})
+
+app.patch('/tasks/duration',(req,res)=>{
+    console.log(req.body.newDuration)
+    db.query(`update tasks set duration=${req.body.newDuration} where id_task=${req.body.id_task};`,function(err, reponse){
+        if(err!=undefined){
+            res.send({errorHasOccured:true});
+        }
+        else{
+            res.send({errorHasOccured:false})
+        }
+    })
+})
+
+app.get('/tasks/:taskId', (req,res)=>{
+    db.query(`select * from tasks where id_task=${req.params.taskId};`, function(err, reponse){
+        if(err) throw err;
+        var locals={
+            task:reponse
+        }
+        console.log(reponse)
+        res.send(locals)
     })
 })
 
