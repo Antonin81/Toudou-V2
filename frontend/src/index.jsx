@@ -33,7 +33,7 @@ root.render(
     <Router>
       <GlobalStyle/>
       <Routes>
-        <Route exact path='/' element={<React.Fragment><Landing/><Footer/></React.Fragment>} />
+        <Route exact path='/' element={<Landing/>} />
         <Route exact path='/Connection' element={<Connection/>} />
         <Route exact path='/Home' element={<React.Fragment><Header/><Home/><Footer/></React.Fragment>} />
         <Route exact path='/Uncomplete' element={<React.Fragment><Header/><Uncomplete/><Footer/></React.Fragment>} />
